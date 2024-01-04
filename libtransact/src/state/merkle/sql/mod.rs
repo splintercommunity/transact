@@ -156,7 +156,7 @@ impl<B: Backend> SqlMerkleState<B> {
     pub fn initial_state_root_hash(&self) -> Result<String, InternalError> {
         let (hash, _) = encode_and_hash(Node::default())?;
 
-        Ok(hex::encode(&hash))
+        Ok(hex::encode(hash))
     }
 }
 

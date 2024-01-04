@@ -236,7 +236,7 @@ impl Action for SubmitPlaylistAction {
             .value_of("input")
             .ok_or_else(|| CliError::ActionError("'input' is required".into()))?;
 
-        let mut in_file = File::open(&input)
+        let mut in_file = File::open(input)
             .map_err(|_| CliError::ActionError("Unable to open input file".to_string()))?;
 
         info!(
