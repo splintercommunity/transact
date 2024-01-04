@@ -36,7 +36,7 @@ use super::{create_cylinder_jwt_auth_signer_key, Action, DEFAULT_LOG_TIME_SECS};
 pub struct WorkloadAction;
 
 impl Action for WorkloadAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (auth, signer) = create_cylinder_jwt_auth_signer_key(args.value_of("key"))?;
@@ -57,7 +57,7 @@ impl Action for WorkloadAction {
             if rate.contains('-') {
                 let split_rate: Vec<String> = rate.split('-').map(String::from).collect();
                 let min_string = split_rate
-                    .get(0)
+                    .first()
                     .ok_or_else(|| CliError::ActionError("Min target rate not provided".into()))?;
                 let max_string = split_rate
                     .get(1)

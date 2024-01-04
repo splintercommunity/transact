@@ -34,8 +34,8 @@ fn main() {
 
     // Run protoc
     protoc_rust::Codegen::new()
-        .out_dir(&dest_path.to_str().unwrap())
-        .inputs(&[
+        .out_dir(dest_path.to_str().unwrap())
+        .inputs([
             proto_path.join("batch.proto").to_str().unwrap(),
             proto_path.join("transaction.proto").to_str().unwrap(),
             proto_path.join("events.proto").to_str().unwrap(),
@@ -59,7 +59,7 @@ fn main() {
             #[cfg(feature = "key-value-state")]
             proto_path.join("key_value_state.proto").to_str().unwrap(),
         ])
-        .includes(&[proto_path.to_str().unwrap()])
+        .includes([proto_path.to_str().unwrap()])
         .customize(Customize::default())
         .run()
         .expect("Protoc Error");

@@ -150,7 +150,7 @@ impl<'a> Iterator for BatchListFeeder<'a> {
             Err(err) => return Some(Err(BatchingError::InternalError(err))),
         };
 
-        batches.get(0).map(|b| Ok(b.clone()))
+        batches.first().map(|b| Ok(b.clone()))
     }
 }
 

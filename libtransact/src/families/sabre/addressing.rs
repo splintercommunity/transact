@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::fmt::Write;
+
 use sha2::{Digest, Sha512};
 
 use crate::handler::ApplyError;
@@ -28,8 +30,10 @@ const CONTRACT_PREFIX: &str = "00ec02";
 pub fn hash(to_hash: &str, num: usize) -> Result<String, ApplyError> {
     let temp = Sha512::digest(to_hash)
         .iter()
-        .map(|b| format!("{:02x}", b))
-        .collect::<String>();
+        .fold(String::new(), |mut output, b| {
+            let _ = write!(output, "{:02x}", b);
+            output
+        });
     let hash = match temp.get(..num) {
         Some(x) => x,
         None => {
