@@ -14,6 +14,8 @@
 
 //! Provides a Sawtooth Transaction Handler for executing Sabre transactions.
 
+use std::fmt::Write;
+
 use sha2::{Digest, Sha512};
 
 use crate::handler::{ApplyError, TransactionContext, TransactionHandler};
@@ -240,10 +242,13 @@ fn create_contract(
 
     state.set_contract(name, version, contract)?;
 
-    let contract_sha512 = Sha512::digest(payload.contract())
-        .iter()
-        .map(|b| format!("{:02x}", b))
-        .collect::<String>();
+    let contract_sha512 =
+        Sha512::digest(payload.contract())
+            .iter()
+            .fold(String::new(), |mut output, b| {
+                let _ = write!(output, "{:02x}", b);
+                output
+            });
 
     let contract_registry_version = VersionBuilder::new()
         .with_version(version.into())
