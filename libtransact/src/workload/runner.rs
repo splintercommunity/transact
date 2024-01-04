@@ -144,8 +144,8 @@ impl WorkloadRunner {
         WorkerShutdownSignaler {
             senders: self
                 .workloads
-                .iter()
-                .map(|(_, worker)| (worker.id.clone(), worker.sender.clone()))
+                .values()
+                .map(|worker| (worker.id.clone(), worker.sender.clone()))
                 .collect(),
         }
     }
