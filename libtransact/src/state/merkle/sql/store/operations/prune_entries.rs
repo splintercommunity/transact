@@ -202,9 +202,7 @@ where
         .load::<MerkleRadixChangeLogDeletion>(conn)?
         .into_iter()
         .fold(HashMap::new(), |mut acc, successor| {
-            let hashes = acc
-                .entry(successor.successor_state_root)
-                .or_insert_with(Vec::new);
+            let hashes: &mut Vec<_> = acc.entry(successor.successor_state_root).or_default();
             hashes.push(successor.deletion);
             acc
         });
