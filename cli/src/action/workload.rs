@@ -57,7 +57,7 @@ impl Action for WorkloadAction {
             if rate.contains('-') {
                 let split_rate: Vec<String> = rate.split('-').map(String::from).collect();
                 let min_string = split_rate
-                    .get(0)
+                    .first()
                     .ok_or_else(|| CliError::ActionError("Min target rate not provided".into()))?;
                 let max_string = split_rate
                     .get(1)
