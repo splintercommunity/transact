@@ -152,7 +152,7 @@ impl Action for CommandSetStateAction {
 
         // send batch to target
         Client::new()
-            .post(&format!("{}/batches", target))
+            .post(format!("{}/batches", target))
             .header(header::CONTENT_TYPE, "octet-stream")
             .header("Authorization", auth)
             .body(batch_bytes)
@@ -298,7 +298,7 @@ impl Action for CommandGetStateAction {
 
         // send batch to target
         Client::new()
-            .post(&format!("{}/batches", target))
+            .post(format!("{}/batches", target))
             .header(header::CONTENT_TYPE, "octet-stream")
             .header("Authorization", auth)
             .body(batch_bytes)
@@ -348,7 +348,7 @@ impl Action for CommandShowStateAction {
             .ok_or_else(|| CliError::ActionError("'address' is required".into()))?;
 
         Client::new()
-            .get(&format!("{}/state/{}", target, address))
+            .get(format!("{}/state/{}", target, address))
             .header("Authorization", auth)
             .send()
             .map_err(|err| {
