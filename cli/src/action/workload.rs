@@ -36,7 +36,7 @@ use super::{create_cylinder_jwt_auth_signer_key, Action, DEFAULT_LOG_TIME_SECS};
 pub struct WorkloadAction;
 
 impl Action for WorkloadAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (auth, signer) = create_cylinder_jwt_auth_signer_key(args.value_of("key"))?;

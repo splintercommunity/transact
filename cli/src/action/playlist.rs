@@ -44,7 +44,7 @@ const DEFAULT_RATE: &str = "1/s";
 pub struct CreatePlaylistAction;
 
 impl Action for CreatePlaylistAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let mut output_writer: Box<dyn Write> = match args.value_of("output") {
@@ -117,7 +117,7 @@ impl Action for CreatePlaylistAction {
 pub struct ProcessPlaylistAction;
 
 impl Action for ProcessPlaylistAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let mut in_file = File::open(
@@ -162,7 +162,7 @@ impl Action for ProcessPlaylistAction {
 pub struct BatchPlaylistAction;
 
 impl Action for BatchPlaylistAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let max_txns: usize = args
@@ -207,7 +207,7 @@ impl Action for BatchPlaylistAction {
 pub struct SubmitPlaylistAction;
 
 impl Action for SubmitPlaylistAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (auth, _) = create_cylinder_jwt_auth_signer_key(args.value_of("key"))?;

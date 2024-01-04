@@ -51,7 +51,7 @@ const DEFAULT_LOG_TIME_SECS: u32 = 30; // time in seconds
 /// An Action is a single subcommand for CLI operations.
 pub trait Action {
     /// Run a CLI Action with the given args
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError>;
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError>;
 }
 
 /// A collection of Subcommands associated with a single parent command.
@@ -82,7 +82,7 @@ impl<'a> SubcommandActions<'a> {
 }
 
 impl<'s> Action for SubcommandActions<'s> {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (subcommand, args) = args.subcommand();

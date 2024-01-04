@@ -32,7 +32,7 @@ use super::{create_cylinder_jwt_auth_signer_key, Action};
 pub struct CommandSetStateAction;
 
 impl Action for CommandSetStateAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (auth, signer) = create_cylinder_jwt_auth_signer_key(args.value_of("key"))?;
@@ -188,7 +188,7 @@ impl Action for CommandSetStateAction {
 pub struct CommandGetStateAction;
 
 impl Action for CommandGetStateAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (auth, signer) = create_cylinder_jwt_auth_signer_key(args.value_of("key"))?;
@@ -334,7 +334,7 @@ impl Action for CommandGetStateAction {
 pub struct CommandShowStateAction;
 
 impl Action for CommandShowStateAction {
-    fn run<'a>(&mut self, arg_matches: Option<&ArgMatches<'a>>) -> Result<(), CliError> {
+    fn run(&mut self, arg_matches: Option<&ArgMatches>) -> Result<(), CliError> {
         let args = arg_matches.ok_or(CliError::RequiresArgs)?;
 
         let (auth, _) = create_cylinder_jwt_auth_signer_key(args.value_of("key"))?;
