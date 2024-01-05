@@ -50,60 +50,8 @@ build:
     $cmd
     echo "\n\033[92mBuild Success\033[0m\n"
 
-ci:
-    just ci-lint
-    just ci-test
-    just ci-docs
-    just ci-debs
-
-ci-debs:
-    #!/usr/bin/env sh
-    set -e
-    REPO_VERSION=$(VERSION=AUTO_STRICT ./bin/get_version) \
-    docker-compose -f docker-compose-installed.yaml build
-    docker-compose -f docker/compose/copy-debs.yaml up
-
-ci-doc:
-    #!/usr/bin/env sh
-    set -e
-    docker-compose -f docker/compose/docker-compose.yaml build
-    docker-compose -f docker/compose/docker-compose.yaml run --rm transact \
-      /bin/bash -c "just doc" --abort-on-container-exit transact
-
-ci-lint:
-    #!/usr/bin/env sh
-    set -e
-    docker-compose -f docker/compose/docker-compose.yaml build
-    docker-compose -f docker/compose/docker-compose.yaml run --rm transact \
-      /bin/bash -c "just lint" --abort-on-container-exit transact
-
-ci-test:
-    #!/usr/bin/env sh
-    set -e
-
-    trap "docker-compose -f docker/compose/docker-compose.yaml down" EXIT
-
-    docker-compose -f docker/compose/docker-compose.yaml build
-    docker-compose -f docker/compose/docker-compose.yaml run --rm transact \
-      /bin/bash -c "just test" --abort-on-container-exit transact
-
-    docker-compose -f docker/compose/docker-compose.yaml up --detach postgres-db
-
-    docker-compose -f docker/compose/docker-compose.yaml run --rm transact \
-       /bin/bash -c \
-       "cargo test --manifest-path /project/transact/libtransact/Cargo.toml \
-          --features sawtooth-compat && \
-        cargo test --manifest-path /project/transact/libtransact/Cargo.toml \
-          --features stable,state-merkle-sql-postgres-tests && \
-        (cd examples/sabre_smallbank && cargo test)"
-
 clean:
     cargo clean
-
-copy-env:
-    #!/usr/bin/env sh
-    set -e
-    find . -name .env | xargs -I '{}' sh -c "echo 'Copying to {}'; rsync .env {}"
 
 doc:
     #!/usr/bin/env sh
@@ -113,7 +61,7 @@ doc:
         --features stable,experimental \
         --no-deps
 
-lint:
+lint: version-check
     #!/usr/bin/env sh
     set -e
     echo "\033[1mcargo fmt -- --check\033[0m"
@@ -142,3 +90,37 @@ test: build
         done
     done
     echo "\n\033[92mTest Success\033[0m\n"
+
+version-check:
+    #!/usr/bin/env sh
+
+    set -e
+
+    version=$(cat VERSION)
+
+    transact_version=$(cargo metadata --format-version 1 --no-deps \
+        | jq '.packages[] | select(.name == "transact") | .version' \
+        | sed -e 's/"//g')
+    cli_version=$(cargo metadata --format-version 1 --no-deps \
+        | jq '.packages[] | select(.name == "transact-cli") | .version' \
+        | sed -e 's/"//g')
+
+    cli_dep_version=$(cat cli/Cargo.toml \
+        | grep "# transact Version" | sed -e 's/^.*"=//' -e 's/".*//')
+
+    if [ "$version" != "$transact_version" ]; then
+        echo "expected $version but found $transact_version in libtransact/Cargo.toml"
+        exit 1
+    fi
+
+    if [ "$version" != "$cli_version" ]; then
+        echo "expected $version but found $cli_version in cli/Cargo.toml"
+        exit 1
+    fi
+
+    if [ "$version" != "$cli_dep_version" ]; then
+        echo "expected $version but found $cli_dep_version in cli/Cargo.toml for the transact dependency"
+        exit 1
+    fi
+
+    echo "Version OK: $version"
