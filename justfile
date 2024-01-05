@@ -61,7 +61,7 @@ doc:
         --features stable,experimental \
         --no-deps
 
-lint:
+lint: version-check
     #!/usr/bin/env sh
     set -e
     echo "\033[1mcargo fmt -- --check\033[0m"
@@ -90,3 +90,37 @@ test: build
         done
     done
     echo "\n\033[92mTest Success\033[0m\n"
+
+version-check:
+    #!/usr/bin/env sh
+
+    set -e
+
+    version=$(cat VERSION)
+
+    transact_version=$(cargo metadata --format-version 1 --no-deps \
+        | jq '.packages[] | select(.name == "transact") | .version' \
+        | sed -e 's/"//g')
+    cli_version=$(cargo metadata --format-version 1 --no-deps \
+        | jq '.packages[] | select(.name == "transact-cli") | .version' \
+        | sed -e 's/"//g')
+
+    cli_dep_version=$(cat cli/Cargo.toml \
+        | grep "# transact Version" | sed -e 's/^.*"=//' -e 's/".*//')
+
+    if [ "$version" != "$transact_version" ]; then
+        echo "expected $version but found $transact_version in libtransact/Cargo.toml"
+        exit 1
+    fi
+
+    if [ "$version" != "$cli_version" ]; then
+        echo "expected $version but found $cli_version in cli/Cargo.toml"
+        exit 1
+    fi
+
+    if [ "$version" != "$cli_dep_version" ]; then
+        echo "expected $version but found $cli_dep_version in cli/Cargo.toml for the transact dependency"
+        exit 1
+    fi
+
+    echo "Version OK: $version"
