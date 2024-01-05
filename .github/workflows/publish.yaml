@@ -56,6 +56,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install protoc
+        run: |
+          curl -OLsS https://github.com/google/protobuf/releases/download/v3.20.0/protoc-3.20.0-linux-x86_64.zip
+          unzip protoc-3.20.0-linux-x86_64.zip -d protoc3
+          rm protoc-3.20.0-linux-x86_64.zip
       - name: Publish release to crates
         run: |
-          CARGO_REGISTRY_TOKEN=${{ secrets.CARGO_TOKEN }} cargo publish -p transact
+          CARGO_REGISTRY_TOKEN=${{ secrets.CARGO_TOKEN }} PATH=$PATH:$(pwd)/protoc3/bin cargo publish -p transact
