@@ -17,9 +17,9 @@ name: 0-4 Rust
 
 on:
   push:
-    branches: [ main ]
+    branches: [ '0-4' ]
   pull_request:
-    branches: [ main ]
+    branches: [ '0-4' ]
   schedule:
     - cron: "0 10 * * *"
   workflow_dispatch:
