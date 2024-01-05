@@ -144,8 +144,8 @@ impl WorkloadRunner {
         WorkerShutdownSignaler {
             senders: self
                 .workloads
-                .iter()
-                .map(|(_, worker)| (worker.id.clone(), worker.sender.clone()))
+                .values()
+                .map(|worker| (worker.id.clone(), worker.sender.clone()))
                 .collect(),
         }
     }
@@ -648,7 +648,7 @@ fn submit_batch(
     batch_bytes: Vec<u8>,
 ) -> Result<String, WorkloadRunnerError> {
     Client::new()
-        .post(&format!("{}/batches", target))
+        .post(format!("{}/batches", target))
         .header(header::CONTENT_TYPE, "octet-stream")
         .header("Authorization", auth)
         .body(batch_bytes)
