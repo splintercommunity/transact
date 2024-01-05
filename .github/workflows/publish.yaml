@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Publish
+name: 0-4 Publish
 
 on:
   push:
     tags:
-      - 'v0.5.*'
+      - 'v0.4.*'
 
 env:
   CARGO_TERM_COLOR: always
